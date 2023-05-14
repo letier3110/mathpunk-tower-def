@@ -1,3 +1,4 @@
+pub mod bullet;
 pub mod game_assets;
 pub mod health;
 pub mod lifetime;

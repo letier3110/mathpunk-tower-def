@@ -4,4 +4,5 @@ use bevy::prelude::*;
 #[reflect(Component)]
 pub struct Tower {
     pub shooting_timer: Timer,
+    pub bullet_offset: Vec3,
 }

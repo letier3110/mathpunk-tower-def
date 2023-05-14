@@ -1,3 +1,4 @@
+mod plugins;
 mod startups;
 mod structs;
 mod systems;
@@ -8,18 +9,15 @@ use startups::setup_ui::setup_ui;
 use startups::spawn_basic_scene::spawn_basic_scene;
 use startups::spawn_camera::spawn_camera;
 
-use structs::lifetime::Lifetime;
-use structs::resolution_settings::ResolutionSettings;
-use structs::tower::Tower;
-
-use systems::bullet_despawn::bullet_despawn;
-use systems::on_resize_system::on_resize_system;
-use systems::toggle_resolution::toggle_resolution;
-use systems::tower_shooting::tower_shooting;
-
 use bevy::{
     prelude::*,
     window::{PresentMode, WindowPlugin},
+};
+
+use structs::resolution_settings::ResolutionSettings;
+
+use plugins::{
+    settings_plugin::SettingsPlugin, target_plugin::TargetPlugin, tower_plugin::TowerPlugin,
 };
 
 use bevy_inspector_egui::quick::WorldInspectorPlugin;
@@ -48,14 +46,24 @@ fn main() {
         .add_startup_system(spawn_basic_scene)
         .add_startup_system(spawn_camera)
         .add_startup_system(setup_ui)
-        .add_system(on_resize_system)
-        .add_system(toggle_resolution)
+        // .add_system(on_resize_system)
+        // .add_system(toggle_resolution)
+        .add_plugin(SettingsPlugin)
         // Inspector Setup
         .add_plugin(WorldInspectorPlugin::new())
-        .register_type::<Tower>()
-        .register_type::<Lifetime>()
-        // Our Systems
-        .add_system(tower_shooting)
-        .add_system(bullet_despawn)
+        .add_plugin(TowerPlugin)
+        .add_plugin(TargetPlugin)
+        // .register_type::<Tower>()
+        // .register_type::<Lifetime>()
+        // .register_type::<Bullet>()
+        // .register_type::<Health>()
+        // .register_type::<Target>()
+        // // Our Systems
+        // .add_system(tower_shooting)
+        // .add_system(move_target)
+        // .add_system(move_bullets)
+        // .add_system(bullet_despawn)
+        // .add_system(target_death)
+        // .add_system(bullet_collision)
         .run();
 }

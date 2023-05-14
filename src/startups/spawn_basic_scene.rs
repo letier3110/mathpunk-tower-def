@@ -1,5 +1,7 @@
 use bevy::prelude::*;
 
+use crate::structs::health::Health;
+use crate::structs::target::Target;
 use crate::structs::tower::Tower;
 
 pub fn spawn_basic_scene(
@@ -21,8 +23,30 @@ pub fn spawn_basic_scene(
     })
     .insert(Tower {
         shooting_timer: Timer::from_seconds(1.0, TimerMode::Repeating),
+        bullet_offset: Vec3::new(0.0, 0.7, 0.6),
     })
     .insert(Name::new("Tower"));
+
+    cmd.spawn(PbrBundle {
+        mesh: meshes.add(Mesh::from(shape::Cube { size: 1.0 })),
+        material: materials.add(Color::rgb(0.67, 0.84, 0.92).into()),
+        transform: Transform::from_xyz(-2.0, 0.2, 1.5),
+        ..default()
+    })
+    .insert(Target { speed: 0.3 })
+    .insert(Health { value: 3 })
+    .insert(Name::new("Target"));
+
+    cmd.spawn(PbrBundle {
+        mesh: meshes.add(Mesh::from(shape::Cube { size: 1.0 })),
+        material: materials.add(Color::rgb(0.67, 0.84, 0.92).into()),
+        transform: Transform::from_xyz(-4.0, 0.2, 1.5),
+        ..default()
+    })
+    .insert(Target { speed: 0.3 })
+    .insert(Health { value: 3 })
+    .insert(Name::new("Target"));
+
     cmd.spawn(PointLightBundle {
         point_light: PointLight {
             intensity: 1500.0,
