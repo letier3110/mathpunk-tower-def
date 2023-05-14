@@ -1,8 +1,28 @@
+mod startups;
+mod structs;
+mod systems;
+
+// use startups::*;
+use startups::asset_loading::asset_loading;
+use startups::setup_ui::setup_ui;
+use startups::spawn_basic_scene::spawn_basic_scene;
+use startups::spawn_camera::spawn_camera;
+
+use structs::lifetime::Lifetime;
+use structs::resolution_settings::ResolutionSettings;
+use structs::tower::Tower;
+
+use systems::bullet_despawn::bullet_despawn;
+use systems::on_resize_system::on_resize_system;
+use systems::toggle_resolution::toggle_resolution;
+use systems::tower_shooting::tower_shooting;
+
 use bevy::{
-    log::LogPlugin,
     prelude::*,
-    window::{PresentMode, WindowPlugin, WindowResized},
+    window::{PresentMode, WindowPlugin},
 };
+
+use bevy_inspector_egui::quick::WorldInspectorPlugin;
 
 fn main() {
     App::new()
@@ -24,123 +44,18 @@ fn main() {
             }),
             ..default()
         }))
-        // .add_startup_system(setup_camera)
-        // .add_plugin(LogPlugin::default())
+        .add_startup_system(asset_loading)
         .add_startup_system(spawn_basic_scene)
         .add_startup_system(spawn_camera)
         .add_startup_system(setup_ui)
         .add_system(on_resize_system)
         .add_system(toggle_resolution)
-        // .add_plugins(DefaultPlugins)
-        // .add_startup_system(setup)
+        // Inspector Setup
+        .add_plugin(WorldInspectorPlugin::new())
+        .register_type::<Tower>()
+        .register_type::<Lifetime>()
+        // Our Systems
+        .add_system(tower_shooting)
+        .add_system(bullet_despawn)
         .run();
-}
-
-#[derive(Component)]
-struct ResolutionText;
-
-#[derive(Resource)]
-struct ResolutionSettings {
-    large: Vec2,
-    medium: Vec2,
-    small: Vec2,
-}
-
-// Spawns the camera that draws UI
-// fn setup_camera(mut cmd: Commands) {
-//     cmd.spawn(Camera2dBundle::default());
-// }
-
-fn spawn_camera(mut cmd: Commands) {
-    cmd.spawn(Camera3dBundle {
-        transform: Transform::from_xyz(-2.0, 2.5, 5.0).looking_at(Vec3::ZERO, Vec3::Y),
-        ..default()
-    });
-}
-
-fn spawn_basic_scene(
-    mut cmd: Commands,
-    mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<StandardMaterial>>,
-) {
-    cmd.spawn(PbrBundle {
-        mesh: meshes.add(shape::Plane::from_size(5.0).into()),
-        material: materials.add(Color::rgb(0.3, 0.5, 0.3).into()),
-        ..default()
-    });
-    cmd.spawn(PbrBundle {
-        mesh: meshes.add(Mesh::from(shape::Cube { size: 1.0 })),
-        material: materials.add(Color::rgb(0.8, 0.7, 0.6).into()),
-        transform: Transform::from_xyz(0.0, 0.5, 0.0),
-        ..default()
-    });
-    cmd.spawn(PointLightBundle {
-        point_light: PointLight {
-            intensity: 1500.0,
-            shadows_enabled: true,
-            ..default()
-        },
-        transform: Transform::from_xyz(4.0, 8.0, 4.0),
-        ..default()
-    });
-}
-
-// Spawns the UI
-fn setup_ui(mut cmd: Commands, asset_server: Res<AssetServer>) {
-    // Node that fills entire background
-    cmd.spawn(NodeBundle {
-        style: Style {
-            size: Size::new(Val::Percent(100.0), Val::Percent(100.0)),
-            ..default()
-        },
-        ..default()
-    })
-    .with_children(|root| {
-        // Text where we display current resolution
-        root.spawn((
-            TextBundle::from_section(
-                "Resolution",
-                TextStyle {
-                    font: asset_server.load("fonts/FiraMono-Medium.ttf"),
-                    font_size: 50.0,
-                    color: Color::BLACK,
-                },
-            ),
-            ResolutionText,
-        ));
-    });
-}
-
-fn toggle_resolution(
-    keys: Res<Input<KeyCode>>,
-    mut windows: Query<&mut Window>,
-    resolution: Res<ResolutionSettings>,
-) {
-    let mut window = windows.single_mut();
-
-    if keys.just_pressed(KeyCode::Key1) {
-        let res = resolution.small;
-        window.resolution.set(res.x, res.y);
-    }
-    if keys.just_pressed(KeyCode::Key2) {
-        let res = resolution.medium;
-        window.resolution.set(res.x, res.y);
-    }
-    if keys.just_pressed(KeyCode::Key3) {
-        let res = resolution.large;
-        window.resolution.set(res.x, res.y);
-    }
-}
-
-/// This system shows how to respond to a window being resized.
-/// Whenever the window is resized, the text will update with the new resolution.
-fn on_resize_system(
-    mut q: Query<&mut Text, With<ResolutionText>>,
-    mut resize_reader: EventReader<WindowResized>,
-) {
-    let mut text = q.single_mut();
-    for e in resize_reader.iter() {
-        // When resolution is being changed
-        text.sections[0].value = format!("{:.1} x {:.1}", e.width, e.height);
-    }
 }
