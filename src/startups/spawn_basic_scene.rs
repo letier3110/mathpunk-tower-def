@@ -10,7 +10,7 @@ pub fn spawn_basic_scene(
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
     cmd.spawn(PbrBundle {
-        mesh: meshes.add(shape::Plane::from_size(5.0).into()),
+        mesh: meshes.add(shape::Plane::from_size(25.0).into()),
         material: materials.add(Color::rgb(0.3, 0.5, 0.3).into()),
         ..default()
     })

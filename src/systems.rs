@@ -1,5 +1,6 @@
 pub mod bullet_collision;
 pub mod bullet_despawn;
+pub mod camera_controls;
 pub mod move_bullets;
 pub mod move_target;
 pub mod on_resize_system;
