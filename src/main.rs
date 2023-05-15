@@ -17,7 +17,8 @@ use bevy::{
 use structs::resolution_settings::ResolutionSettings;
 
 use plugins::{
-    settings_plugin::SettingsPlugin, target_plugin::TargetPlugin, tower_plugin::TowerPlugin,
+    bullet_plugin::BulletPlugin, settings_plugin::SettingsPlugin, target_plugin::TargetPlugin,
+    tower_plugin::TowerPlugin,
 };
 
 use bevy_inspector_egui::quick::WorldInspectorPlugin;
@@ -53,6 +54,7 @@ fn main() {
         .add_plugin(WorldInspectorPlugin::new())
         .add_plugin(TowerPlugin)
         .add_plugin(TargetPlugin)
+        .add_plugin(BulletPlugin)
         // .register_type::<Tower>()
         // .register_type::<Lifetime>()
         // .register_type::<Bullet>()
