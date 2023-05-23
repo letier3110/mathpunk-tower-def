@@ -11,7 +11,7 @@ pub fn tower_shooting(
     mut cmd: Commands,
     mut towers: Query<(Entity, &mut Tower, &GlobalTransform)>,
     targets: Query<&GlobalTransform, With<Target>>,
-    fish: Res<GameAssets>,
+    assets: Res<GameAssets>,
     time: Res<Time>,
 ) {
     for (tower_ent, mut tower, transform) in towers.iter_mut() {
@@ -21,7 +21,7 @@ pub fn tower_shooting(
             cmd.entity(tower_ent).with_children(|commands| {
                 let spawn_transform =
                     // Transform::from_translation(bullet_spawn).with_scale(Vec3::splat(8.0));
-                    Transform::from_translation(tower.bullet_offset).with_scale(Vec3::splat(8.0));
+                    Transform::from_translation(tower.bullet_offset).with_scale(Vec3::splat(50.0));
 
                 let direction = targets
                     .iter()
@@ -33,7 +33,7 @@ pub fn tower_shooting(
                 if let Some(direction) = direction {
                     commands
                         .spawn(SceneBundle {
-                            scene: fish.fish.clone(),
+                            scene: assets.fish.clone(),
                             transform: spawn_transform,
                             ..default()
                         })
@@ -42,7 +42,7 @@ pub fn tower_shooting(
                         })
                         .insert(Bullet {
                             direction,
-                            speed: 2.5,
+                            speed: 12.5,
                         })
                         .insert(Name::new("Bullet"));
                 }

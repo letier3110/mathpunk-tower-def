@@ -43,7 +43,19 @@ fn main() {
             }),
             ..default()
         }))
-        .add_startup_system(asset_loading)
+        // .add_system_to_stage(StartupStage::PreStartup, asset_loading)
+        // .add_startup_system(asset_loading.before(spawn_basic_scene))
+        // .add_system(StartupSet::PreStartup, asset_loading)
+        // .add_system(StartupSet::Startup, spawn_basic_scene)
+        // .add_system(StartupSet::Startup, spawn_camera)
+        // .add_system(StartupSet::Startup, setup_ui)
+        // .add_stage_after(
+        //     StartupStage::Startup,
+        //     "PreStartup",
+        //     SystemStage::single_threaded(),
+        // )
+        .add_startup_system(asset_loading.in_base_set(StartupSet::PreStartup))
+        // .add_startup_system(asset_loading)
         .add_startup_system(spawn_basic_scene)
         .add_startup_system(spawn_camera)
         .add_startup_system(setup_ui)
