@@ -14,6 +14,8 @@ use bevy::{
     window::{PresentMode, WindowPlugin},
 };
 
+use bevy_mod_picking::prelude::*;
+
 use structs::resolution_settings::ResolutionSettings;
 
 use plugins::{
@@ -43,41 +45,15 @@ fn main() {
             }),
             ..default()
         }))
-        // .add_system_to_stage(StartupStage::PreStartup, asset_loading)
-        // .add_startup_system(asset_loading.before(spawn_basic_scene))
-        // .add_system(StartupSet::PreStartup, asset_loading)
-        // .add_system(StartupSet::Startup, spawn_basic_scene)
-        // .add_system(StartupSet::Startup, spawn_camera)
-        // .add_system(StartupSet::Startup, setup_ui)
-        // .add_stage_after(
-        //     StartupStage::Startup,
-        //     "PreStartup",
-        //     SystemStage::single_threaded(),
-        // )
+        .add_plugins(DefaultPickingPlugins)
         .add_startup_system(asset_loading.in_base_set(StartupSet::PreStartup))
-        // .add_startup_system(asset_loading)
         .add_startup_system(spawn_basic_scene)
         .add_startup_system(spawn_camera)
         .add_startup_system(setup_ui)
-        // .add_system(on_resize_system)
-        // .add_system(toggle_resolution)
         .add_plugin(SettingsPlugin)
-        // Inspector Setup
         .add_plugin(WorldInspectorPlugin::new())
         .add_plugin(TowerPlugin)
         .add_plugin(TargetPlugin)
         .add_plugin(BulletPlugin)
-        // .register_type::<Tower>()
-        // .register_type::<Lifetime>()
-        // .register_type::<Bullet>()
-        // .register_type::<Health>()
-        // .register_type::<Target>()
-        // // Our Systems
-        // .add_system(tower_shooting)
-        // .add_system(move_target)
-        // .add_system(move_bullets)
-        // .add_system(bullet_despawn)
-        // .add_system(target_death)
-        // .add_system(bullet_collision)
         .run();
 }
